@@ -13,7 +13,7 @@ from sympy.core.symbol import Symbol
 
 
 class EquationSymbol(object):
-    def __init__(self, name, min=0, max=1000, value=500, unit='', isResult=False, factor=1e0):
+    def __init__(self, name, min=0, max=1000, value=500, unit='', isResult=False, factor=1e0, extern=None):
         self.name = name
         self.symbol = sympy.symbols(name)
         self.min = min
@@ -22,6 +22,7 @@ class EquationSymbol(object):
         self.unit = unit
         self.isResult = isResult
         self.factor = factor
+        self.extern = extern
 
     def __repr__(self):
         return '#EquationSymbol %s, %d %d %d#' % (self.name, self.min, self.value, self.max)

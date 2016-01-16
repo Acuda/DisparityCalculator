@@ -14,10 +14,10 @@ EQUATION_DATA = {
     'DISPARITY': {
         'DATA': Equation('Disparity = (Focal * 1/PixelSize) * Base / Distance ', [
             EquationSymbol(name='Disparity', min=0, max=200, value=0, unit='px', isResult=True),
-            EquationSymbol(name='Base', min=1, max=200, value=33, unit='cm', factor=1e-2),
-            EquationSymbol(name='Focal', min=1, max=100, value=4, unit='mm', factor=1e-3),
+            EquationSymbol(name='Base', min=1, max=200, value=66.6, unit='cm', factor=1e-2),
+            EquationSymbol(name='Focal', min=1, max=30, value=15, unit='mm', factor=1e-3),
             EquationSymbol(name='Distance', min=0, max=200, value=5, unit='m'),
-            EquationSymbol(name='PixelSize', min=1, max=20, value=17.7, unit=u'µm', factor=1e-6),
+            EquationSymbol(name='PixelSize', min=1, max=20, value=17, unit=u'µm', factor=1e-6, extern='Pixel-Size'),
         ])
     },
     'ERROR DISP': {
@@ -27,6 +27,13 @@ EQUATION_DATA = {
             EquationSymbol(name='Focal', min=1, max=100, value=4, unit='mm', factor=1e-3),
             EquationSymbol(name='Distance', min=0, max=200, value=5, unit='m'),
             EquationSymbol(name='PixelSize', min=1, max=20, value=17.7, unit=u'µm', factor=1e-6),
+        ])
+    },
+    'Pixel-Size': {
+        'DATA': Equation('PixelSize = SensorLength / NumPixel ', [
+            EquationSymbol(name='PixelSize', min=1, max=20, value=17, unit=u'µm', factor=1e-6),
+            EquationSymbol(name='SensorLength', min=1, max=50, value=33, unit='mm', factor=1e-3, isResult=True),
+            EquationSymbol(name='NumPixel', min=600, max=2048, value=1024, unit='px'),
         ])
     },
 }

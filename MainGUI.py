@@ -79,12 +79,9 @@ class ValueBar(QtGui.QWidget):
         self.box.setTitle(title)
 
     def updateValue(self, value):
-
-
         ival = int(value)
         nkval = int(value*1e3 - ival*1e3)
 
-        print 'UPDATE VALUE', value, ival, nkval
         self.value.setText('%d.%03d' % (ival, nkval))
         self.slider.setValue(ival)
         self.slider_nk.setValue(nkval)
@@ -125,6 +122,8 @@ class EquationBox(QtGui.QWidget):
             self.grid_layout.addWidget(bar, idx*scale, 0, scale, 1)
             self.equation_data['ValueBar'].append(bar)
 
+            QtCore.QObject.connect(bar.value, QtCore.SIGNAL("textChanged(QString)"), self.calculateEquation)
+
             radio = QtGui.QRadioButton()
             radio.setChecked(equation_symbol.isResult)
             self.grid_layout.addWidget(radio, idx*scale, 1, scale, 1)
@@ -156,10 +155,12 @@ class EquationBox(QtGui.QWidget):
 
         target_symbol = self.equation_data['name_order'][target_idx]
         result = self.equation_data['DATA'].calculate(target_symbol)
-        self.equation_data['lblResult'].setText('Result: %07.3f' % result)
 
         target_factor = 1.0/self.equation_data['DATA'].symbol_dict[target_symbol].factor
+        target_unit = self.equation_data['DATA'].symbol_dict[target_symbol].unit
         self.equation_data['ValueBar'][target_idx].updateValue(result*target_factor)
+
+        self.equation_data['lblResult'].setText('Result: % 7.3f %s' % (result*target_factor, target_unit))
 
 
 
@@ -175,10 +176,23 @@ class MainWindow(QtGui.QWidget):
         self.vlayout = QtGui.QVBoxLayout()
         self.hlayout.addLayout(self.vlayout)
 
+        # create EquationBox's
         for name, data in EQUATION_DATA.items():
             eqb = EquationBox(name, data)
             self.hlayout.addWidget(eqb)
             eqb.calculateEquation()
+
+        # link external values on change
+        for name, data in EQUATION_DATA.items():
+            for symbol_name, equation_symbol in data['DATA'].symbol_dict.items():
+                if equation_symbol.extern:
+                    idx = EQUATION_DATA[equation_symbol.extern]['name_order'].index(str(symbol_name))
+                    bar = EQUATION_DATA[equation_symbol.extern]['ValueBar'][idx]
+
+                    idx = EQUATION_DATA[name]['name_order'].index(str(symbol_name))
+                    EQUATION_DATA[name]['ValueBar'][idx].updateValue(2)
+
+                    QtCore.QObject.connect(bar.value, QtCore.SIGNAL("textChanged(QString)"), EQUATION_DATA[name]['ValueBar'][idx].value.setText)
 
         self.show()
         return
