@@ -12,9 +12,21 @@ from Equation import *
 
 EQUATION_DATA = {
     'DISPARITY': {
-        'DATA': Equation('x = y**2 + r', [
-            EquationSymbol(name='y', min=2, max=10, value=5, unit=''),
-            EquationSymbol(name='r', min=2, max=10, value=5, unit=''),
+        'DATA': Equation('Disparity = (Focal * 1/PixelSize) * Base / Distance ', [
+            EquationSymbol(name='Disparity', min=0, max=200, value=0, unit='px', isResult=True),
+            EquationSymbol(name='Base', min=1, max=200, value=33, unit='cm', factor=1e-2),
+            EquationSymbol(name='Focal', min=1, max=100, value=4, unit='mm', factor=1e-3),
+            EquationSymbol(name='Distance', min=0, max=200, value=5, unit='m'),
+            EquationSymbol(name='PixelSize', min=1, max=20, value=17.7, unit=u'µm', factor=1e-6),
+        ])
+    },
+    'ERROR DISP': {
+        'DATA': Equation('Error = Accuracy ', [
+            EquationSymbol(name='Accuracy', min=0, max=10, value=1./16, unit='px', isResult=True),
+            EquationSymbol(name='Base', min=1, max=200, value=33, unit='cm', factor=1e-2),
+            EquationSymbol(name='Focal', min=1, max=100, value=4, unit='mm', factor=1e-3),
+            EquationSymbol(name='Distance', min=0, max=200, value=5, unit='m'),
+            EquationSymbol(name='PixelSize', min=1, max=20, value=17.7, unit=u'µm', factor=1e-6),
         ])
     },
 }
