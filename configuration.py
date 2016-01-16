@@ -26,10 +26,10 @@ EQUATION_DATA = {
     },
     'DISPARITY': {
         'DATA': Equation('Disparity = (Focal * 1/PixelSize) * Base / Distance', [
+            EquationSymbol(name='Distance', min=5, max=50, value=6, unit='m'),
             EquationSymbol(name='Disparity', min=0, max=160, value=64, unit='px', isResult=True),
-            EquationSymbol(name='Base', min=1, max=200, value=43.520, unit='cm', factor=1e-2),
+            EquationSymbol(name='Base', min=1, max=200, value=40, unit='cm', factor=1e-2),
             EquationSymbol(name='Focal', min=1, max=30, value=15, unit='mm', factor=1e-3),
-            EquationSymbol(name='Distance', min=6, max=100, value=6, unit='m'),
             EquationSymbol(name='PixelSize', min=1, max=20, value=17, unit=u'µm', factor=1e-6, extern='Pixel-Size'),
         ])
     },
@@ -37,10 +37,10 @@ EQUATION_DATA = {
         'DATA': Equation('DistanceError = (Focal * 1/PixelSize) * Base / Disparity - (Focal * 1/PixelSize) * Base / (Disparity + AccuracyFactor*1./16)', [
             EquationSymbol(name='DistanceError', min=0, max=100, value=5, unit='m', factor=1, isResult=True),
             EquationSymbol(name='AccuracyFactor', min=1, max=10, value=5),
-            EquationSymbol(name='Disparity', min=0, max=160, value=0, unit='px', extern='DISPARITY'),
-            EquationSymbol(name='Base', min=1, max=200, value=33, unit='cm', factor=1e-2, extern='DISPARITY'),
-            EquationSymbol(name='Focal', min=1, max=100, value=4, unit='mm', factor=1e-3, extern='DISPARITY'),
-            EquationSymbol(name='PixelSize', min=1, max=20, value=17.7, unit=u'µm', factor=1e-6, extern='DISPARITY'),
+            EquationSymbol(name='Disparity', min=0, max=160, value=64, unit='px', extern='DISPARITY'),
+            EquationSymbol(name='Base', min=1, max=200, value=40, unit='cm', factor=1e-2, extern='DISPARITY'),
+            EquationSymbol(name='Focal', min=1, max=30, value=15, unit='mm', factor=1e-3, extern='DISPARITY'),
+            EquationSymbol(name='PixelSize', min=1, max=20, value=17, unit=u'µm', factor=1e-6, extern='DISPARITY'),
         ])
     },
 }
