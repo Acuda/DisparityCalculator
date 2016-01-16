@@ -10,15 +10,12 @@
 
 import sys
 import os
-import sympy
-from sympy.core.symbol import Symbol
 from PyQt4 import QtGui, QtCore
 
-
+from configuration import *
 
 
 class ValueBar(QtGui.QWidget):
-
     def __init__(self):
         super(ValueBar, self).__init__()
         self.initUI()
@@ -75,9 +72,10 @@ class ValueBar(QtGui.QWidget):
 
 
 class EquationBox(QtGui.QWidget):
-
-    def __init__(self):
+    def __init__(self, name, equation_data):
         super(EquationBox, self).__init__()
+        self.name = name
+        self.equation_data = equation_data
         self.initUI()
 
     def initUI(self):
@@ -88,31 +86,16 @@ class EquationBox(QtGui.QWidget):
         self.box.setGeometry(0, 0, 650, 380)
         self.box.setLayout(self.grid_layout)
 
-
-        '''
-        self.symbols = 'U R I'
-        self.symbols_list = self.symbols.split(' ')
-
-
-
-
-        u, r, i = sympy.symbols(self.symbols)
-        self.equation = sympy.Eq(u, r*i)
-
-        for symbol in self.symbols_list:
+        for symbol_name, equation_symbol in self.equation_data['DATA'].symbol_dict.items():
             bar = ValueBar()
-            bar.initValues(title=symbol, value=1, min=1, max=1000)
+            bar.initValues(title='%s [%s]' % (symbol_name, equation_symbol.unit),
+                           value=equation_symbol.value, min=equation_symbol.min, max=equation_symbol.max)
             self.grid_layout.addWidget(bar)
 
-        self.result = QtGui.QLabel()
-
-
-        '''
-        #self.initValues()
         self.show()
 
-class MainWindow(QtGui.QWidget):
 
+class MainWindow(QtGui.QWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.initUI()
@@ -122,80 +105,17 @@ class MainWindow(QtGui.QWidget):
 
         self.vlayout = QtGui.QVBoxLayout(self)
 
-        btn1 = QtGui.QPushButton('Button 1')
-        btn2 = QtGui.QPushButton('Button 2')
-        btn3 = QtGui.QPushButton('Button 3')
-        btn4 = QtGui.QPushButton('Button 4')
-
-        self.vlayout.addWidget(EquationBox())
-        #self.vlayout.addWidget(ValueBar())
-        self.vlayout.addWidget(QtGui.QWidget())
-
+        for name, data in EQUATION_DATA.items():
+            eqb = EquationBox(name, data)
+            self.vlayout.addWidget(eqb)
 
         self.show()
         return
 
 
-
-class EquationSymbol(object):
-    def __init__(self, name, min=0, max=1000, value=500):
-        self.name = name
-        self.symbol = sympy.symbols(name)
-        self.min = min
-        self.max = max
-        self.value = value
-
-    def __repr__(self):
-        return '#EquationSymbol %s, %d %d %d#' % (self.name, self.min, self.value, self.max)
-
-
-class Equation(object):
-    def __init__(self, expression, equation_symbol_list=[]):
-        self.expression = expression
-
-        expression_left_hand, expression_right_hand = expression.split('=')
-        sympy_expression_left_hand = sympy.sympify(expression_left_hand)
-        sympy_expression_right_hand = sympy.sympify(expression_right_hand)
-        self.sympy_equation = sympy.Eq(sympy_expression_left_hand, sympy_expression_right_hand)
-
-        self.symbols = list(set(self.findSymbols(self.sympy_equation)))
-
-        self.symbol_dict = dict()
-        for symbol in self.symbols:
-            self.symbol_dict[str(symbol)] = EquationSymbol(name=str(symbol))
-
-        for equation_symbol in equation_symbol_list:
-            if equation_symbol.name in self.symbol_dict:
-                self.symbol_dict[equation_symbol.name] = equation_symbol
-
-
-    def findSymbols(self, eq):
-        symbols = list()
-
-        if isinstance(eq, Symbol):
-            symbols.append(eq)
-        else:
-            for eqv in eq.args:
-                symbols.extend(self.findSymbols(eqv))
-
-        return symbols
-
-    def calculate(self, symbol):
-        eq = sympy.solve(self.sympy_equation, symbol)[0]
-        for name, value in self.symbol_dict.items():
-            eq = eq.subs(value.symbol, value.value)
-        return eq.evalf()
-
 if __name__ == '__main__':
     #dueto bug on ubuntu with i3
     os.environ['QT_GRAPHICSSYSTEM'] = 'native'
-
-    eq = Equation('x = y**2 + r', [
-        EquationSymbol(name='y', min=2, max=10, value=5),
-        EquationSymbol(name='r', min=2, max=10, value=5),
-        #EquationSymbol(name='x', min=2, max=10, value=5),
-    ])
-
 
     app = QtGui.QApplication(sys.argv)
     ex = MainWindow()
